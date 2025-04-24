@@ -1,6 +1,7 @@
 import requests
+import GHOUSE_API_KEY
 
-api_key = "YOUR_GREENHOUSE_API_KEY"
+api_key = os.environ.get('GHOUSE_API_KEY')
 headers = {"Authorization": f"Bearer {api_key}"}
 
 # Fetch candidates (paginated)
