@@ -1,0 +1,27 @@
+import requests
+
+api_key = "YOUR_GREENHOUSE_API_KEY"
+headers = {"Authorization": f"Bearer {api_key}"}
+
+# Fetch candidates (paginated)
+candidates = []
+page = 1
+while True:
+    response = requests.get(
+        f"https://harvest.greenhouse.io/v1/candidates?per_page=100&page={page}",
+        headers=headers
+    )
+    data = response.json()
+    if not data:
+        break
+    candidates.extend(data)
+    page += 1
+
+# Download resumes
+for candidate in candidates:
+    for attachment in candidate.get("attachments", []):
+        if attachment["type"] == "resume":
+            resume_url = attachment["url"]
+            resume_data = requests.get(resume_url, headers=headers).content
+            with open(f"resumes/{candidate['id']}.pdf", "wb") as f:
+                f.write(resume_data)
